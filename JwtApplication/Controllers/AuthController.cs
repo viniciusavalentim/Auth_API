@@ -15,10 +15,19 @@ namespace JwtApplication.Controllers
         {
             this._authInterface = auth;
         }
+
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginUsersDto userLogin)
         {
-            return Ok(await _authInterface.Login(userLogin));
+            var response = await _authInterface.Login(userLogin);
+            if (response.Status == false)
+            {
+                return BadRequest(response);
+            }
+            else
+            {
+                return Ok(response);
+            }
         }
 
 
@@ -27,7 +36,14 @@ namespace JwtApplication.Controllers
         //Task<ActionResult> = retuorna uma tarefa do tipo actionResult
         public async Task<ActionResult> Register(CreateUsersDto user)
         {
-            return Ok(await _authInterface.Register(user));
+            var response = await _authInterface.Register(user);
+            if (response.Status == false) { 
+                return BadRequest(response.Data);
+            }
+            else
+            {
+                return Ok(response);
+            }
         }
     }
 }

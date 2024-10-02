@@ -25,11 +25,11 @@ namespace JwtApplication.Services.UserServices
 
             try
             {
-                if(ExistUser(registerUser))
+                if (ExistUser(registerUser))
                 {
                     response.Data = null;
                     response.Message = "Email ou usuario ja cadastrados";
-                    response.Stats = false;  
+                    response.Status = false;
                     return response;
                 }
 
@@ -37,10 +37,10 @@ namespace JwtApplication.Services.UserServices
 
                 UserModel user = new UserModel()
                 {
-                   User = registerUser.User,
-                   Email = registerUser.Email,
-                   PasswordHash = hash, 
-                   PasswordSalt = salt  
+                    User = registerUser.User,
+                    Email = registerUser.Email,
+                    PasswordHash = hash,
+                    PasswordSalt = salt
                 };
 
                 _context.Add(user);
@@ -52,11 +52,11 @@ namespace JwtApplication.Services.UserServices
                 response.Data = token;
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 response.Data = null;
-                response.Message = ex.Message;  
-                response.Stats = false;
+                response.Message = ex.Message;
+                response.Status = false;
             }
 
             return response;
@@ -74,32 +74,33 @@ namespace JwtApplication.Services.UserServices
                 {
                     response.Data = null;
                     response.Message = "Email não cadastrado";
-                    response.Stats = false;
+                    response.Status = false;
                     return response;
                 }
 
-                
+
 
                 if (!_passwordService.CheckPassword(loginUser.Password, emailUser.PasswordHash, emailUser.PasswordSalt))
                 {
                     response.Data = null;
-                    response.Message = "Invalid Password";
-                    response.Stats = false;
+                    response.Message = "Senha incorreta, Tente novamente";
+                    response.Status = false;
                 }
+                else
+                {
+                    var token = _passwordService.CreateToken(emailUser);
 
-                var token = _passwordService.CreateToken(emailUser);
-
-                response.Data = token;
-                response.Message = "User Logado com sucesso!";
-                response.Stats = true;
-
+                    response.Data = token;
+                    response.Message = "User Logado com sucesso!";
+                    response.Status = true;
+                }
 
             }
             catch (Exception ex)
             {
                 response.Data = null;
                 response.Message = ex.Message;
-                response.Stats = false;
+                response.Status = false;
             }
 
             return response;
